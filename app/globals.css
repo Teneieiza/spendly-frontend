@@ -43,12 +43,6 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-@layer base {
-  * {
-    @apply m-0 box-border p-0;
-  }
-}
-
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -121,8 +115,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    @apply m-0 box-border p-0;
   }
   body {
     @apply bg-background text-foreground;
+    @apply bg-[#f7f8fa] text-gray-800;
   }
+  .card {
+    @apply bg-white border border-gray-200 shadow-sm rounded-xl p-6;
+  }
+
 }

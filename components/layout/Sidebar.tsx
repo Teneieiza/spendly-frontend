@@ -52,13 +52,13 @@ export default function Sidebar() {
             </button>
 
             {showGeneral && (
-              <div className="ml-6 flex flex-col font-bold">
+              <div className="ml-6 flex flex-col font-semibold">
                 <Link
                   href="/dashboard"
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors",
                     open ? "w-[90%]" : "w-[70%]",
-                    pathname === "/dashboard" ? "bg-gray-200 font-semibold" : "text-gray-700"
+                    pathname === "/dashboard" ? "bg-gray-200 font-bold" : "text-gray-700"
                   )}
                 >
                   {open ? <span className="flex gap-2"><ChartColumn size={18} /> Dashboard</span>: <ChartColumn size={18} />}
@@ -68,7 +68,7 @@ export default function Sidebar() {
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors",
                     open ? "w-[90%]" : "w-[70%]",
-                    pathname === "/expense" ? "bg-gray-200 font-semibold" : "text-gray-700"
+                    pathname === "/expense" ? "bg-gray-200 font-bold" : "text-gray-700"
                   )}
                 >
                   {open ? <span className="flex gap-2"> <Wallet size={18}/> Expense</span>: <Wallet size={18}/>}
@@ -96,13 +96,13 @@ export default function Sidebar() {
             </button>
 
             {showSetting &&(
-              <div className="ml-6 mt-1 space-y-1 font-bold">
+              <div className="ml-6 mt-1 space-y-1 font-semibold">
                 <Link
                   href="/setting"
                     className={cn(
                     "flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors",
                     open ? "w-[90%]" : "w-[70%]",
-                    pathname === "/setting" ? "bg-gray-200 font-semibold" : "text-gray-700"
+                    pathname === "/setting" ? "bg-gray-200 font-bold" : "text-gray-700"
                   )}
                 >
                   {open ? <span className="flex gap-2"> <Settings size={18}/> Setting</span>: <Settings size={18}/>}

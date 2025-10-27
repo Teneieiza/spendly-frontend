@@ -26,13 +26,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
-  PlusCircle,
   Utensils,
   Car,
   ShoppingBag,
   Calendar,
   Edit,
   Trash2,
+  CircleAlert,
 } from 'lucide-react'
 
 type Category = {
@@ -122,7 +122,7 @@ export default function ExpenseDashboard() {
             value={month.toString()}
             onValueChange={(v) => setMonth(Number(v))}
           >
-            <SelectTrigger className="w-44 text-lg font-bold">
+            <SelectTrigger className="text-md w-44 font-bold">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent className="text-lg">
@@ -138,7 +138,7 @@ export default function ExpenseDashboard() {
             value={year.toString()}
             onValueChange={(v) => setYear(Number(v))}
           >
-            <SelectTrigger className="w-40 text-lg font-bold">
+            <SelectTrigger className="text-md w-40 font-bold">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
@@ -154,7 +154,7 @@ export default function ExpenseDashboard() {
           </Select>
         </div>
 
-        <Button variant="outline" className="px-14 py-2 text-lg font-bold">
+        <Button variant="outline" className="text-md px-14 py-2 font-bold">
           FILTER
         </Button>
       </div>
@@ -190,9 +190,9 @@ export default function ExpenseDashboard() {
                 setSelectedDate(day)
                 setOpen(true)
               }}
-              className={`group relative flex h-44 cursor-pointer flex-col items-center justify-center p-3 shadow-sm transition-colors duration-300 hover:shadow-lg ${
+              className={`group relative flex h-32 rounded-sm cursor-pointer flex-col items-center justify-center p-3 shadow-sm transition-colors duration-300 hover:shadow-lg ${
                 isToday(day)
-                  ? 'bg-gradient-to-br from-[#4ae6b7] via-[#6fd6b7] to-[#b8f0f1] ring-2 ring-black hover:from-[#a4e4ce] hover:via-[#2ddd97] hover:to-[#15db96]'
+                  ? 'bg-gradient-to-br from-[#4ae6b7] via-[#6fd6b7] to-[#b8f0f1] hover:from-[#a4e4ce] hover:via-[#2ddd97] hover:to-[#15db96]'
                   : 'bg-[#AE7BDA] hover:bg-[#CBA3EE]'
               }`}
             >
@@ -217,7 +217,7 @@ export default function ExpenseDashboard() {
                     : 'text-white group-hover:text-black'
                 }`}
               >
-                <span className="text-2xl md:text-4xl">{format(day, 'd')}</span>
+                <span className="text-xl md:text-3xl">{format(day, 'd')}</span>
                 <span className="text-sm tracking-wider md:text-base">
                   {format(day, 'EEE').toUpperCase()}
                 </span>
@@ -226,8 +226,8 @@ export default function ExpenseDashboard() {
               <div
                 className={`my-1 w-[50%] border-t transition-colors ${
                   isToday(day)
-                    ? 'border-2 border-black'
-                    : 'border-white group-hover:border-2 group-hover:border-black'
+                    ? 'border-1 border-black'
+                    : 'border-white group-hover:border-1 group-hover:border-black'
                 }`}
               />
 
@@ -239,27 +239,107 @@ export default function ExpenseDashboard() {
         })}
 
         {/* Monthly Budget Status Bar */}
-        <div className="fixed right-12 bottom-15 flex h-44 w-142 flex-col justify-center gap-4 rounded-lg border-3 border-black bg-white px-6 py-3 shadow-lg">
-          
-          <div className='font-bold text-lg text-black flex items-center'>
-            <p className='flex justify-start items-start'>NAME:</p>
-            <p className="ml-50">MONEY: {remaining} ฿</p>
+        <div className="fixed right-11 bottom-16 flex h-32 w-110 flex-col justify-center gap-2 rounded-lg border-2 border-black bg-white px-6 shadow-lg">
+          {/* Tips Icon */}
+          <div className="absolute top-1 right-1">
+            <div className="group relative cursor-pointer">
+              <span className="text-lg font-bold text-red-600">
+                <CircleAlert size={20}/>
+              </span>
+              <div className="pointer-events-none absolute -top-20 -right-2 w-80 rounded-md bg-gray-900 px-6 py-6 text-sm font-bold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                Spend wisely to keep your HP healthy!
+              </div>
+            </div>
           </div>
 
-          <div className='w-full flex justify-start items-center gap-2'>
-            <p className='font-bold text-xl'>HP: </p>
-          <div className="h-5 w-full overflow-hidden rounded-full border border-black bg-gray-200">
-            <div
-              className={`h-full ${barColor}`}
-              style={{ width: `${percentLeft}%` }}
-            />
-          </div>
+          {/* Header */}
+          <div className="flex items-center text-md font-bold text-black">
+            <p className="flex items-start justify-start">NAME:</p>
+            <p className="ml-40">MONEY: {remaining} ฿</p>
           </div>
 
-          <p className={`text-md font-bold items-center flex justify-center ${textColor}`}>
-            {statusMessage} 
+          {/*Hp Bar*/}
+          <div className="flex w-full items-center justify-start gap-2">
+            <p className="text-lg font-bold">HP: </p>
+            <div className="relative h-5 w-full overflow-hidden rounded-full border border-black bg-gray-200">
+              {/* Animated Gradient Bar */}
+              <div
+                className="absolute top-0 left-0 h-full rounded-full"
+                style={{
+                  width: `${percentLeft}%`,
+                  transition: 'width 0.5s ease-in-out',
+                  backgroundImage:
+                    percentLeft <= 0
+                      ? 'linear-gradient(270deg, #dc2626, #b91c1c, #dc2626)'
+                      : percentLeft < 30
+                        ? 'linear-gradient(270deg, #dc2626, #b91c1c, #dc2626)'
+                        : percentLeft < 50
+                          ? 'linear-gradient(270deg, #f97316, #ea580c, #f97316)'
+                          : percentLeft < 70
+                            ? 'linear-gradient(270deg, #facc15, #eab308, #facc15)'
+                            : 'linear-gradient(270deg, #22c55e, #16a34a, #22c55e)',
+                  backgroundSize: '600% 100%',
+                  backgroundPosition: '0% 50%',
+                  animation: 'gradientShift 3s linear infinite',
+                }}
+              >
+                {/* Particles */}
+                {Array.from({ length: 15 }).map((_, i) => {
+                  let particleColor = ''
+                  if (percentLeft < 30) particleColor = 'rgba(220,38,38,0.6)'
+                  else if (percentLeft < 50)
+                    particleColor = 'rgba(250,204,21,0.6)'
+                  else particleColor = 'rgba(34,197,94,0.6)'
+
+                  return (
+                    <div
+                      key={i}
+                      className="absolute top-0 h-full w-1 rounded-full opacity-70 blur-sm"
+                      style={{
+                        left: `${i * 6 + Math.random() * 5}%`,
+                        backgroundColor: particleColor,
+                        animation: `particleMove ${1 + Math.random() * 2}s ease-in-out infinite alternate`,
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+
+          <p
+            className={`text-md flex items-center justify-center font-bold ${textColor}`}
+          >
+            {statusMessage}
           </p>
         </div>
+
+        {/* ใส่ style global **นอก div ทั้งหมด** */}
+        <style jsx>{`
+          @keyframes gradientShift {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
+          }
+
+          @keyframes particleMove {
+            0% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-50%);
+            }
+            100% {
+              transform: translateY(0);
+            }
+          }
+        `}</style>
       </div>
 
       {/* Main Modal */}

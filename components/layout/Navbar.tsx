@@ -10,19 +10,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Bell } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Bell } from "lucide-react";
+import { useCalendarStore } from "@/store/useCalendarStore";
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
+  const pathname = usePathname()
+  const { goToday, prevWeek, nextWeek, getMonthLabel } = useCalendarStore();
+
   return (
     <nav className="flex items-center justify-between h-18 px-4 border-b bg-background">
       {/* Left: Search */}
-      <div className="flex items-center space-x-2 w-full max-w-lg">
-        <Input
-          type="text"
-          placeholder="Search..."
-          className="w-full"
-        />
+      <div className="flex gap-3 w-full">
+        <div className="flex items-center space-x-2 w-full max-w-lg">
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="w-full"
+          />
+        </div>
+        {pathname === "/expense" && (
+          <div className="flex items-center gap-4 justify-between bg-background px-4">
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={goToday}>
+                Today
+              </Button>
+              <Button variant="ghost" size="icon" onClick={prevWeek}>
+                <ChevronLeft />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={nextWeek}>
+                <ChevronRight />
+              </Button>
+            </div>
+            <div className="text-lg font-semibold">{getMonthLabel()}</div>
+          </div>
+        )}
       </div>
+
 
       {/* Right: Notification + User */}
       <div className="flex items-center space-x-6">

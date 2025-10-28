@@ -18,10 +18,8 @@ interface CalendarState {
   getMonthLabel: () => string;
 }
 
-// ✅ ใช้ฟังก์ชันให้ค่าเริ่มต้นหลังจากโหลดบน client
 const getInitialDate = () => {
   if (typeof window === "undefined") {
-    // ถ้า SSR — ให้ส่ง date คงที่ (เช่น 2025-01-01)
     const fixed = new Date("2025-01-01T00:00:00Z");
     return {
       currentDate: fixed,
@@ -29,7 +27,6 @@ const getInitialDate = () => {
       weekEnd: endOfWeek(fixed, { weekStartsOn: 0 }),
     };
   }
-  // ถ้า client — ใช้เวลาจริง
   const today = new Date();
   return {
     currentDate: today,

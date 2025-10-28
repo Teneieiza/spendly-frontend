@@ -13,9 +13,9 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
-import { useCalendarStore } from "@/store/useCalendarStore";
-import { Calendar } from "@/components/ui/calendar";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { useCalendarStore } from '@/store/useCalendarStore'
+import { Calendar } from '@/components/ui/calendar'
+import { startOfWeek, endOfWeek } from 'date-fns'
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -68,9 +68,27 @@ export default function Sidebar() {
 
             {showGeneral && (
               <div className="ml-6 flex flex-col gap-1 font-semibold">
-                <SidebarLink open={open} pathname={pathname} href="/dashboard" icon={<ChartColumn size={18} />} label="Dashboard" />
-                <SidebarLink open={open} pathname={pathname} href="/expense" icon={<Wallet size={18} />} label="Expense" />
-                <SidebarLink open={open} pathname={pathname} href="/overall" icon={<Wallet size={18} />} label="Overall" />
+                <SidebarLink
+                  open={open}
+                  pathname={pathname}
+                  href="/dashboard"
+                  icon={<ChartColumn size={18} />}
+                  label="Dashboard"
+                />
+                <SidebarLink
+                  open={open}
+                  pathname={pathname}
+                  href="/expense"
+                  icon={<Wallet size={18} />}
+                  label="Expense"
+                />
+                <SidebarLink
+                  open={open}
+                  pathname={pathname}
+                  href="/overall"
+                  icon={<Wallet size={18} />}
+                  label="Overall"
+                />
               </div>
             )}
           </div>
@@ -97,32 +115,35 @@ export default function Sidebar() {
 
             {showSetting && (
               <div className="mt-1 ml-6 space-y-1 font-semibold">
-                <SidebarLink open={open} pathname={pathname} href="/setting" icon={<Settings size={18} />} label="Setting" />
+                <SidebarLink
+                  open={open}
+                  pathname={pathname}
+                  href="/setting"
+                  icon={<Settings size={18} />}
+                  label="Setting"
+                />
               </div>
             )}
           </div>
 
-        {/* Calendar เฉพาะหน้า Expense */}
-        {open && pathname === '/expense' && (
-          <div className="border-t mt-8">
-            <Calendar
-              mode="single"
-              selected={currentDate}
-              onSelect={(date) => {
-                if (!date) return
-                setState({
-                  currentDate: date,
-                  weekStart: startOfWeek(date, { weekStartsOn: 0 }),
-                  weekEnd: endOfWeek(date, { weekStartsOn: 0 }),
-                })
-              }}
-            />
-          </div>
-        )}
-
+          {/* Calendar เฉพาะหน้า Expense */}
+          {open && pathname === '/expense' && (
+            <div className="mt-8 border-t">
+              <Calendar
+                mode="single"
+                selected={currentDate}
+                onSelect={(date) => {
+                  if (!date) return
+                  setState({
+                    currentDate: date,
+                    weekStart: startOfWeek(date, { weekStartsOn: 0 }),
+                    weekEnd: endOfWeek(date, { weekStartsOn: 0 }),
+                  })
+                }}
+              />
+            </div>
+          )}
         </div>
-
-
 
         {/* Logout */}
         <div className="mb-4 px-4 font-bold">
@@ -147,7 +168,9 @@ function SidebarLink({ href, icon, label, pathname, open }: any) {
       )}
     >
       {open ? (
-        <span className="flex gap-2">{icon} {label}</span>
+        <span className="flex gap-2">
+          {icon} {label}
+        </span>
       ) : (
         icon
       )}

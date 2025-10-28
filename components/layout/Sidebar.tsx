@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BarChart, Wallet, Settings, ChevronDown, Menu, BadgeDollarSign, ChartColumn, LogOut } from "lucide-react";
+import { BarChart, Wallet, Settings, ChevronDown, Menu, BadgeDollarSign, ChartColumn, LogOut, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
@@ -52,7 +52,7 @@ export default function Sidebar() {
             </button>
 
             {showGeneral && (
-              <div className="ml-6 flex flex-col font-semibold">
+              <div className="ml-6 flex flex-col gap-1 font-semibold">
                 <Link
                   href="/dashboard"
                   className={cn(
@@ -72,6 +72,16 @@ export default function Sidebar() {
                   )}
                 >
                   {open ? <span className="flex gap-2"> <Wallet size={18}/> Expense</span>: <Wallet size={18}/>}
+                </Link>
+                <Link
+                  href="/overall"
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 transition-colors",
+                    open ? "w-[90%]" : "w-[70%]",
+                    pathname === "/overall" ? "bg-gray-200 font-bold" : "text-gray-700"
+                  )}
+                >
+                  {open ? <span className="flex gap-2"> <Calendar size={18}/> Overall</span>: <Wallet size={18}/>}
                 </Link>
               </div>
             )}

@@ -45,7 +45,7 @@ export default function Navbar() {
       </div>
 
       {/* Right: Notification + User */}
-      <div className="flex items-center space-x-6">
+      <div className="mr-6 flex items-center space-x-6">
         {/* Notification */}
         <button className="hover:bg-muted relative rounded-full p-2 transition-colors">
           <Bell className="h-5 w-5" />

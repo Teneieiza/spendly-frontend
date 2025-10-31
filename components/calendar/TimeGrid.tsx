@@ -13,10 +13,13 @@ export default function TimeGrid() {
   const eventsStore = useEventsStore()
   const getEventsByDate = eventsStore.getEventsByDate
   const addEvent = eventsStore.addEvent
+  const updateEvent = eventsStore.updateEvent
 
   const containerRef = useRef<HTMLDivElement | null>(null)
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
+  const [selectedCell, setSelectedCell] = useState<string | null>(null)
+  const [editEvent, setEditEvent] = useState<EventItem | null>(null)
   const [modalState, setModalState] = useState({
     open: false,
     anchorRect: null as DOMRect | null,
@@ -46,6 +49,8 @@ export default function TimeGrid() {
     const side = dayIndex <= 2 ? 'right' : 'left'
     const dateStr = formatDateKey(days[dayIndex])
 
+    setSelectedCell(`${dayIndex}-${hour}`)
+    setEditEvent(null)
     setModalState({
       open: true,
       anchorRect,
@@ -56,8 +61,16 @@ export default function TimeGrid() {
     })
   }
 
-  const closeModal = () => setModalState((s) => ({ ...s, open: false }))
-  const handleSave = (payload: Omit<EventItem, 'id'>) => addEvent(payload)
+  const closeModal = () => {
+    setModalState((s) => ({ ...s, open: false }))
+    setEditEvent(null)
+    setSelectedCell(null)
+  }
+
+  const handleSave = (payload: Omit<EventItem, 'id'>) => {
+    if (editEvent) updateEvent(editEvent.id, payload)
+    else addEvent(payload)
+  }
 
   const now = new Date()
   const nowDateKey = format(now, 'yyyy-MM-dd')
@@ -79,7 +92,7 @@ export default function TimeGrid() {
   return (
     <div
       ref={containerRef}
-      className="relative grid h-[calc(100vh-13rem)] w-full [grid-template-columns:repeat(8,198px)] divide-x divide-gray-200 overflow-y-auto bg-white"
+      className="relative grid h-[calc(100vh-13rem)] w-full [grid-template-columns:80px_repeat(7,215px)] divide-x divide-gray-200 overflow-y-auto bg-white"
     >
       {/* Left: Time column */}
       <div className="flex flex-col border-r bg-white">
@@ -97,13 +110,14 @@ export default function TimeGrid() {
       {days.map((d, dayIndex) => {
         const dateKey = formatDateKey(d)
         const events = eventsForDate(dateKey)
+        const isToday = dateKey === nowDateKey
 
         return (
           <div key={dayIndex} className="relative flex flex-col bg-white">
-            {hours.map((h) => {
+            {hours.map((h, idx) => {
               const cellKey = `${dayIndex}-${h}`
               const cellEvents = events.filter((ev) => ev.hour === h)
-              const isCurrent = dateKey === nowDateKey && h === nowHour
+              const isSelected = selectedCell === cellKey
 
               return (
                 <div
@@ -112,17 +126,29 @@ export default function TimeGrid() {
                     cellRefs.current[cellKey] = el
                   }}
                   onClick={(e) => handleCellClick(e, dayIndex, h)}
-                  className="relative h-16 cursor-pointer border-t border-gray-100 p-2 text-sm hover:bg-gray-50"
-                  style={{
-                    outline: isCurrent ? '2px solid #FB923C' : undefined,
-                  }}
+                  className={`relative h-16 cursor-pointer border-t border-gray-100 p-1 text-sm hover:bg-gray-50 ${
+                    isSelected ? 'bg-blue-50' : ''
+                  }`}
                 >
                   {cellEvents.map((ev) => (
                     <div
                       key={ev.id}
-                      className="mb-1 flex items-center justify-between rounded-md border px-2 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        setEditEvent(ev)
+                        setModalState({
+                          open: true,
+                          anchorRect: rect,
+                          side: dayIndex <= 2 ? 'right' : 'left',
+                          direction: 'down',
+                          date: ev.date,
+                          hour: ev.hour,
+                        })
+                      }}
+                      className="mb-1 flex items-center justify-between rounded-md border px-2 py-1 cursor-pointer hover:bg-gray-100"
                     >
-                      <div className="flex items-start gap-2">
+                      <div className="flex items-center gap-2 justify-center">
                         <div
                           className="inline-block h-3 w-3 rounded-full"
                           style={{ backgroundColor: ev.color }}
@@ -135,6 +161,14 @@ export default function TimeGrid() {
                       </div>
                     </div>
                   ))}
+
+                  {isToday && h === nowHour && (
+                    <div className="absolute left-0 right-0 bottom-0 z-10 flex items-center">
+                      <div className="relative w-full h-[2px] bg-orange-400">
+                        <div className="absolute -left-[4px] top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-orange-400" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -155,6 +189,7 @@ export default function TimeGrid() {
             initial={{ date: modalState.date, hour: modalState.hour }}
             onClose={closeModal}
             onSave={handleSave}
+            editData={editEvent}
           />
         )}
     </div>

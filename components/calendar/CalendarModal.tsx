@@ -3,6 +3,15 @@
 import React, { useState, useEffect } from 'react'
 import { EntryType, EventItem } from '@/store/useEventsStore'
 import { motion, AnimatePresence } from 'framer-motion'
+import {
+  ChevronDown,
+  Utensils,
+  Car,
+  ShoppingBag,
+  Heart,
+  Home,
+  MoreHorizontal,
+} from 'lucide-react'
 
 type Props = {
   open: boolean
@@ -12,13 +21,16 @@ type Props = {
   initial: { date: string; hour: number }
   onClose: () => void
   onSave: (payload: Omit<EventItem, 'id'>) => void
+  editData?: EventItem | null
 }
 
 const CATEGORY_OPTIONS = [
-  { id: 'food', label: 'อาหาร', color: 'bg-red-400' },
-  { id: 'transport', label: 'เดินทาง', color: 'bg-blue-400' },
-  { id: 'shopping', label: 'ช็อปปิ้ง', color: 'bg-pink-400' },
-  { id: 'other', label: 'อื่นๆ', color: 'bg-gray-400' },
+  { id: 'food', label: 'อาหาร', color: 'bg-red-400', icon: <Utensils size={16} /> },
+  { id: 'transport', label: 'เดินทาง', color: 'bg-blue-400', icon: <Car size={16} /> },
+  { id: 'shopping', label: 'ช็อปปิ้ง', color: 'bg-pink-400', icon: <ShoppingBag size={16} /> },
+  { id: 'home', label: 'บ้าน', color: 'bg-green-400', icon: <Home size={16} /> },
+  { id: 'health', label: 'สุขภาพ', color: 'bg-purple-400', icon: <Heart size={16} /> },
+  { id: 'other', label: 'อื่นๆ', color: 'bg-gray-400', icon: <MoreHorizontal size={16} /> },
 ]
 
 export default function CalendarModal({
@@ -29,19 +41,20 @@ export default function CalendarModal({
   initial,
   onClose,
   onSave,
+  editData,
 }: Props) {
   const [title, setTitle] = useState('')
   const [type, setType] = useState<EntryType>('expense')
   const [category, setCategory] = useState(CATEGORY_OPTIONS[0].id)
   const [amount, setAmount] = useState<number | ''>('')
   const [error, setError] = useState<string | ''>('')
+  const [showDropdown, setShowDropdown] = useState(false)
 
   const modalW = 412
   const modalH = 500
 
   let top =
     direction === 'up' ? anchorRect.top - modalH + 8 : anchorRect.bottom - 58
-
   let left =
     side === 'right' ? anchorRect.right + 8 : anchorRect.left - modalW - 8
 
@@ -52,6 +65,8 @@ export default function CalendarModal({
   if (left < 8) left = 8
   if (top + modalH > vh - 8) top = vh - modalH - 8
   if (top < 8) top = 8
+
+  const selectedCategory = CATEGORY_OPTIONS.find((c) => c.id === category)!
 
   const handleSave = () => {
     if (!title.trim()) return setError('Please enter the title.')
@@ -67,7 +82,11 @@ export default function CalendarModal({
           ? '#60A5FA'
           : cat.color === 'bg-pink-400'
             ? '#F472B6'
-            : '#9CA3AF'
+            : cat.color === 'bg-green-400'
+              ? '#4ADE80'
+              : cat.color === 'bg-purple-400'
+                ? '#C084FC'
+                : '#9CA3AF'
 
     onSave({
       date: initial.date,
@@ -82,14 +101,20 @@ export default function CalendarModal({
   }
 
   useEffect(() => {
-    if (open) {
+    if (open && editData) {
+      setTitle(editData.title)
+      setType(editData.type)
+      setCategory(editData.category)
+      setAmount(editData.amount)
+      setError('')
+    } else if (open) {
       setTitle('')
       setType('expense')
       setCategory(CATEGORY_OPTIONS[0].id)
       setAmount('')
       setError('')
     }
-  }, [open])
+  }, [open, editData])
 
   return (
     <AnimatePresence>
@@ -127,7 +152,9 @@ export default function CalendarModal({
               pointerEvents: 'auto',
             }}
           >
-            <div className="mb-2 text-lg font-semibold">Add entry</div>
+            <div className="mb-2 text-lg font-semibold">
+              {editData ? 'Edit entry' : 'Add entry'}
+            </div>
 
             <input
               className="mb-3 h-14 w-full rounded border px-3 text-base"
@@ -155,24 +182,39 @@ export default function CalendarModal({
               </button>
             </div>
 
-            <div className="mb-3">
+            {/* Category Dropdown */}
+            <div className="mb-3 relative">
               <div className="mb-2 text-sm font-medium">Category</div>
-              <div className="flex flex-wrap gap-2">
-                {CATEGORY_OPTIONS.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setCategory(c.id)}
-                    className={`flex items-center gap-2 rounded-md border px-3 py-1 text-sm ${
-                      category === c.id ? 'ring-2 ring-offset-1' : ''
-                    }`}
-                  >
-                    <span
-                      className={`${c.color} inline-block h-3 w-3 rounded-full`}
-                    />
-                    <span>{c.label}</span>
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`${selectedCategory.color} inline-block h-3 w-3 rounded-full`} />
+                  {selectedCategory.icon}
+                  <span>{selectedCategory.label}</span>
+                </div>
+                <ChevronDown size={16} />
+              </button>
+
+              {showDropdown && (
+                <div className="absolute z-50 mt-1 w-full rounded-md border bg-white shadow-lg">
+                  {CATEGORY_OPTIONS.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setCategory(c.id)
+                        setShowDropdown(false)
+                      }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-100"
+                    >
+                      <span className={`${c.color} inline-block h-3 w-3 rounded-full`} />
+                      {c.icon}
+                      <span>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="mb-3">

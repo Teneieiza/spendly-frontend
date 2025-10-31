@@ -8,7 +8,7 @@ export default function WeekHeader() {
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd })
 
   return (
-    <div className="grid w-full [grid-template-columns:repeat(8,198px)] border-b bg-gray-50">
+    <div className="grid w-full [grid-template-columns:80px_repeat(7,215px)] border-b bg-gray-50">
       <div className="flex h-19 items-center justify-center border-r text-sm font-medium text-gray-500">
         GMT+07
       </div>

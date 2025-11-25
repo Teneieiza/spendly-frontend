@@ -146,26 +146,29 @@ export default function TimeGrid() {
                           hour: ev.hour,
                         })
                       }}
-                      className="mb-1 flex items-center justify-between rounded-md border px-2 py-1 cursor-pointer hover:bg-gray-100"
+                      className="mb-1 flex cursor-pointer items-center justify-between rounded-md border px-2 py-1 hover:bg-gray-100"
                     >
-                      <div className="flex items-center gap-2 justify-center">
+                      <div className="flex items-center justify-center gap-2">
                         <div
                           className="inline-block h-3 w-3 rounded-full"
                           style={{ backgroundColor: ev.color }}
                         />
                         <div className="text-xs font-semibold">{ev.title}</div>
                       </div>
-                      <div className="text-xs font-medium">
-                        {ev.type === 'income' ? '+' : '-'}
-                        {ev.amount}
+                      <div className="flex items-center justify-center gap-2 text-xs font-medium">
+                        <div>
+                          {ev.type === 'income' ? '+' : '-'}
+                          {ev.amount}
+                        </div>
+                        <span>Bath</span>
                       </div>
                     </div>
                   ))}
 
                   {isToday && h === nowHour && (
-                    <div className="absolute left-0 right-0 bottom-0 z-10 flex items-center">
-                      <div className="relative w-full h-[2px] bg-orange-400">
-                        <div className="absolute -left-[4px] top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-orange-400" />
+                    <div className="absolute right-0 bottom-0 left-0 z-10 flex items-center">
+                      <div className="relative h-[2px] w-full bg-orange-400">
+                        <div className="absolute top-1/2 -left-[4px] h-2 w-2 -translate-y-1/2 rounded-full bg-orange-400" />
                       </div>
                     </div>
                   )}

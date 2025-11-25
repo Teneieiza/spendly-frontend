@@ -1,7 +1,15 @@
-export default function Expense() {
+'use client'
+
+import WeekHeader from '@/components/calendar/WeekHeader'
+import TimeGrid from '@/components/calendar/TimeGrid'
+
+export default function ExpensePage() {
   return (
-    <div className="flex justify-center items-center h-full">
-      <h1>Expense</h1>
+    <div className="flex h-full flex-col">
+      <div className="sticky top-0 z-10 bg-white">
+        <WeekHeader />
+      </div>
+      <TimeGrid />
     </div>
-  );
+  )
 }

@@ -1,0 +1,28 @@
+'use client'
+
+import { eachDayOfInterval, format, isToday } from 'date-fns'
+import { useCalendarStore } from '@/store/useCalendarStore'
+
+export default function WeekHeader() {
+  const { weekStart, weekEnd } = useCalendarStore()
+  const days = eachDayOfInterval({ start: weekStart, end: weekEnd })
+
+  return (
+    <div className="grid w-full [grid-template-columns:80px_repeat(7,215px)] border-b bg-gray-50">
+      <div className="flex h-19 items-center justify-center border-r text-sm font-medium text-gray-500">
+        GMT+07
+      </div>
+      {days.map((day) => (
+        <div
+          key={day.toString()}
+          className={`flex h-19 flex-col items-center justify-center border-r ${
+            isToday(day) ? 'bg-blue-100 font-bold text-blue-600' : 'bg-white'
+          }`}
+        >
+          <div className="text-xs">{format(day, 'EEE')}</div>
+          <div className="text-sm">{format(day, 'd')}</div>
+        </div>
+      ))}
+    </div>
+  )
+}

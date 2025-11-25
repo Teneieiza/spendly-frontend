@@ -1,17 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { EntryType, EventItem } from '@/store/useEventsStore'
+import { EntryType, EventItem, useEventsStore } from '@/store/useEventsStore'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ChevronDown,
-  Utensils,
-  Car,
-  ShoppingBag,
-  Heart,
-  Home,
-  MoreHorizontal,
-} from 'lucide-react'
+import { CATEGORY_OPTIONS, Category } from '@/constants/categories'
+import { ChevronDown } from 'lucide-react'
 
 type Props = {
   open: boolean
@@ -23,15 +16,6 @@ type Props = {
   onSave: (payload: Omit<EventItem, 'id'>) => void
   editData?: EventItem | null
 }
-
-const CATEGORY_OPTIONS = [
-  { id: 'food', label: 'อาหาร', color: 'bg-red-400', icon: <Utensils size={16} /> },
-  { id: 'transport', label: 'เดินทาง', color: 'bg-blue-400', icon: <Car size={16} /> },
-  { id: 'shopping', label: 'ช็อปปิ้ง', color: 'bg-pink-400', icon: <ShoppingBag size={16} /> },
-  { id: 'home', label: 'บ้าน', color: 'bg-green-400', icon: <Home size={16} /> },
-  { id: 'health', label: 'สุขภาพ', color: 'bg-purple-400', icon: <Heart size={16} /> },
-  { id: 'other', label: 'อื่นๆ', color: 'bg-gray-400', icon: <MoreHorizontal size={16} /> },
-]
 
 export default function CalendarModal({
   open,
@@ -74,20 +58,6 @@ export default function CalendarModal({
       return setError('Please enter the amount.')
     if (!category) return setError('Please select a category.')
 
-    const cat = CATEGORY_OPTIONS.find((c) => c.id === category)!
-    const color =
-      cat.color === 'bg-red-400'
-        ? '#F87171'
-        : cat.color === 'bg-blue-400'
-          ? '#60A5FA'
-          : cat.color === 'bg-pink-400'
-            ? '#F472B6'
-            : cat.color === 'bg-green-400'
-              ? '#4ADE80'
-              : cat.color === 'bg-purple-400'
-                ? '#C084FC'
-                : '#9CA3AF'
-
     onSave({
       date: initial.date,
       hour: initial.hour,
@@ -95,7 +65,7 @@ export default function CalendarModal({
       type,
       category,
       amount: Number(amount),
-      color,
+      color: selectedCategory.color,
     })
     onClose()
   }
@@ -166,7 +136,7 @@ export default function CalendarModal({
             <div className="mb-3 flex gap-2">
               <button
                 onClick={() => setType('income')}
-                className={`flex-1 rounded-md border py-2 font-semibold ${
+                className={`flex-1 cursor-pointer rounded-md border py-2 font-semibold ${
                   type === 'income' ? 'bg-green-100' : 'bg-white'
                 }`}
               >
@@ -174,7 +144,7 @@ export default function CalendarModal({
               </button>
               <button
                 onClick={() => setType('expense')}
-                className={`flex-1 rounded-md border py-2 font-semibold ${
+                className={`flex-1 cursor-pointer rounded-md border py-2 font-semibold ${
                   type === 'expense' ? 'bg-orange-100' : 'bg-white'
                 }`}
               >
@@ -183,14 +153,18 @@ export default function CalendarModal({
             </div>
 
             {/* Category Dropdown */}
-            <div className="mb-3 relative">
+            <div className="relative mb-3">
               <div className="mb-2 text-sm font-medium">Category</div>
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm"
+                className="flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm"
               >
                 <div className="flex items-center gap-2">
-                  <span className={`${selectedCategory.color} inline-block h-3 w-3 rounded-full`} />
+                  <span
+                    className="inline-block h-3 w-3 rounded-full"
+                    style={{ backgroundColor: selectedCategory.color }}
+                  />
+
                   {selectedCategory.icon}
                   <span>{selectedCategory.label}</span>
                 </div>
@@ -206,9 +180,12 @@ export default function CalendarModal({
                         setCategory(c.id)
                         setShowDropdown(false)
                       }}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-100"
+                      className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left hover:bg-gray-100"
                     >
-                      <span className={`${c.color} inline-block h-3 w-3 rounded-full`} />
+                      <span
+                        className="inline-block h-3 w-3 rounded-full"
+                        style={{ backgroundColor: c.color }}
+                      />
                       {c.icon}
                       <span>{c.label}</span>
                     </button>
@@ -230,13 +207,28 @@ export default function CalendarModal({
               />
             </div>
 
+            {editData && (
+              <button
+                onClick={() => {
+                  useEventsStore.getState().deleteEvent(editData.id)
+                  onClose()
+                }}
+                className="mb-3 w-full cursor-pointer rounded-md border bg-red-500 py-2 font-semibold text-white hover:border-2 hover:border-red-500 hover:bg-white hover:text-red-500"
+              >
+                Delete Entry
+              </button>
+            )}
+
             <div className="mt-auto flex items-center justify-end gap-2">
-              <button onClick={onClose} className="rounded-md border px-4 py-2">
+              <button
+                onClick={onClose}
+                className="cursor-pointer rounded-md border px-4 py-2"
+              >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="rounded-md bg-blue-600 px-4 py-2 text-white"
+                className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white"
               >
                 Save
               </button>

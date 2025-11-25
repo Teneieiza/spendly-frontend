@@ -55,7 +55,11 @@ export default function ResultModal({
         </DialogHeader>
 
         <ScrollArea className="flex-1">
-          <div className="space-y-2">
+          <div
+            className={`max-h-96 space-y-2 overflow-y-auto rounded-sm p-2 ${
+              events.length > 0 ? 'border-2' : ''
+            }`}
+          >
             {events.map((ev) => (
               <div
                 key={ev.id}
@@ -76,10 +80,18 @@ export default function ResultModal({
               </div>
             ))}
           </div>
+
+          {/* Total Amount */}
+          <div className="mt-10 flex justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
+            <span>Total:</span>
+            <span>
+              {events.reduce((sum, ev) => sum + Number(ev.amount), 0)} ฿
+            </span>
+          </div>
         </ScrollArea>
 
         {/* Day Note */}
-        <div className="mt-4">
+        <div>
           <Input
             placeholder="Note for this day"
             value={selectedDayNote}

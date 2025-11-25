@@ -1,6 +1,6 @@
 'use client'
 
-import { JSX, useState } from 'react'
+import { useState } from 'react'
 import {
   format,
   startOfMonth,
@@ -16,46 +16,25 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
-import {
-  Utensils,
-  Car,
-  ShoppingBag,
-  Calendar,
-} from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import HpStatusBar from '@/components/overall/HpStatusBar'
 import ResultModal from '@/components/overall/ResultModal'
-
-type Category = {
-  name: string
-  color: string
-  icon: JSX.Element
-}
-
-const categories: Category[] = [
-  { name: 'Food', color: 'bg-green-400', icon: <Utensils size={14} /> },
-  { name: 'Travel', color: 'bg-blue-400', icon: <Car size={14} /> },
-  { name: 'Shopping', color: 'bg-pink-400', icon: <ShoppingBag size={14} /> },
-]
+import { useEventsStore } from '@/store/useEventsStore'
+import { CATEGORY_OPTIONS, Category } from '@/constants/categories'
 
 export default function Overall() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [open, setOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
-  const [editIndex, setEditIndex] = useState<number | null>(null)
+  const [editId, setEditId] = useState<string | null>(null)
 
   const [month, setMonth] = useState(new Date().getMonth())
   const [year, setYear] = useState(new Date().getFullYear())
-  const [records, setRecords] = useState<
-    { date: string; amount: number; note: string; category: string }[]
-  >([])
 
   const [dayNotes, setDayNotes] = useState<Record<string, string>>({})
 
-  const totalDays = getDaysInMonth(new Date(year, month))
-  const startDate = startOfMonth(new Date(year, month))
-  const days = Array.from({ length: totalDays }, (_, i) =>
-    addDays(startDate, i),
-  )
+  const eventsStore = useEventsStore()
+  const getEventsByDate = eventsStore.getEventsByDate
 
   const [form, setForm] = useState({
     category: '',
@@ -63,21 +42,29 @@ export default function Overall() {
     amount: '',
   })
 
+  const totalDays = getDaysInMonth(new Date(year, month))
+  const startDate = startOfMonth(new Date(year, month))
+  const days = Array.from({ length: totalDays }, (_, i) =>
+    addDays(startDate, i),
+  )
+
   const selectedDayKey = selectedDate
     ? format(selectedDate, 'yyyy-MM-dd')
     : null
+
   const selectedDayNote = selectedDayKey ? (dayNotes[selectedDayKey] ?? '') : ''
 
-  const [monthlyBudget, setMonthlyBudget] = useState(20000)
-
-  const monthlyTotal = records
+  const monthlyEvents = Object.values(eventsStore.events)
+    .flat()
     .filter(
-      (r) =>
-        format(new Date(r.date), 'yyyy-MM') ===
+      (ev) =>
+        format(new Date(ev.date), 'yyyy-MM') ===
         format(new Date(year, month), 'yyyy-MM'),
     )
-    .reduce((sum, r) => sum + r.amount, 0)
 
+  const monthlyTotal = monthlyEvents.reduce((sum, r) => sum + r.amount, 0)
+
+  const [monthlyBudget, setMonthlyBudget] = useState(20000)
   const remaining = monthlyBudget - monthlyTotal
   const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
 
@@ -150,16 +137,17 @@ export default function Overall() {
       </div>
 
       <div className="grid grid-cols-7 gap-4">
+        {/* Calendar Title */}
         <div className="col-span-2 flex items-center justify-center gap-4">
-          <Calendar size={48} className="text-gray-700" />
+          <Calendar size={42} className="text-gray-700" />
           <div className="flex items-center text-4xl font-bold tracking-wide text-black md:text-6xl">
-            <span className="mr-3 text-2xl font-medium md:text-4xl">
+            <span className="mr-3 text-2xl font-medium md:text-3xl">
               {format(new Date(year, month), 'MMMM')
                 .toUpperCase()
                 .split('')
                 .join(' ')}
             </span>
-            <span className="text-2xl font-bold md:text-4xl">
+            <span className="text-2xl font-bold md:text-3xl">
               {format(new Date(year, month), 'yyyy')}
             </span>
           </div>
@@ -168,9 +156,9 @@ export default function Overall() {
         {/* Days */}
         {days.map((day) => {
           const dayKey = format(day, 'yyyy-MM-dd')
-          const dayRecords = records.filter((r) => r.date === dayKey)
+          const dayEvents = getEventsByDate(dayKey)
           const uniqueCats = Array.from(
-            new Set(dayRecords.map((r) => r.category)),
+            new Set(dayEvents.map((ev) => ev.category)),
           )
 
           return (
@@ -180,26 +168,30 @@ export default function Overall() {
                 setSelectedDate(day)
                 setOpen(true)
               }}
-              className={`group relative flex h-32 rounded-sm cursor-pointer flex-col items-center justify-center p-3 shadow-sm transition-colors duration-300 hover:shadow-lg ${
+              className={`group relative flex h-32 cursor-pointer flex-col items-center justify-center rounded-sm p-3 shadow-sm transition-colors duration-300 hover:shadow-lg ${
                 isToday(day)
                   ? 'bg-gradient-to-br from-[#4ae6b7] via-[#6fd6b7] to-[#b8f0f1] hover:from-[#a4e4ce] hover:via-[#2ddd97] hover:to-[#15db96]'
                   : 'bg-[#AE7BDA] hover:bg-[#CBA3EE]'
               }`}
             >
+              {/* Category badges */}
               {uniqueCats.length > 0 && (
                 <div className="absolute top-2 right-2 flex gap-1">
-                  {uniqueCats.map((cat) => {
-                    const catObj = categories.find((c) => c.name === cat)
+                  {uniqueCats.map((catId) => {
+                    const catObj = CATEGORY_OPTIONS.find((c) => c.id === catId)
+                    if (!catObj) return null
                     return (
                       <div
-                        key={cat}
-                        className={`h-4 w-4 border border-black ${catObj?.color}`}
+                        key={catId}
+                        className="h-4 w-4 rounded-full border border-black"
+                        style={{ backgroundColor: catObj.color }}
                       />
                     )
                   })}
                 </div>
               )}
 
+              {/* Day text */}
               <div
                 className={`flex items-baseline gap-1 font-bold transition-colors ${
                   isToday(day)
@@ -236,25 +228,21 @@ export default function Overall() {
         />
       </div>
 
-      {/* Main Modal */}
+      {/* Modal */}
       <ResultModal
         open={open}
         setOpen={setOpen}
         selectedDate={selectedDate}
         selectedDayKey={selectedDayKey}
-        records={records}
-        setRecords={setRecords}
-        categories={categories}
         selectedDayNote={selectedDayNote}
-        dayNotes={dayNotes}   
+        dayNotes={dayNotes}
         setDayNotes={setDayNotes}
         form={form}
         setForm={setForm}
-        editIndex={editIndex}
-        setEditIndex={setEditIndex}
+        editId={editId}
+        setEditId={setEditId}
         setAddOpen={setAddOpen}
       />
-
     </div>
   )
 }

@@ -206,14 +206,20 @@ export default function Overall() {
               </div>
 
               <div
-                className={`my-1 w-[50%] border-t transition-colors ${
+                className={`my-2 w-[50%] border-1 border-t transition-colors ${
                   isToday(day)
-                    ? 'border-1 border-black'
-                    : 'border-white group-hover:border-1 group-hover:border-black'
+                    ? 'border-black'
+                    : 'border-white group-hover:border-black'
                 }`}
               />
 
-              <div className="line-clamp-2 text-sm text-black">
+              <div
+                className={`line-clamp-2 text-sm transition-colors ${
+                  isToday(day)
+                    ? 'text-black'
+                    : 'text-white group-hover:text-black'
+                }`}
+              >
                 {dayNotes[dayKey] ?? ''}
               </div>
             </div>

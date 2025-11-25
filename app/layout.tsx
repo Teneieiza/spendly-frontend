@@ -23,12 +23,12 @@ import Sidebar from "@/components/layout/Sidebar"
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white flex justify-center`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen bg-white flex justify-center`}>
         <div className="w-full max-h-screen m-5 bg-white border border-gray-200 shadow-sm rounded-2xl flex overflow-hidden">
           <Sidebar />
           <div className="flex-1 flex flex-col">
             <Navbar />
-            <main className="p-6 bg-[#f9fafb] flex-1 overflow-y-auto">{children}</main>
+            <main className="p-6 bg-[#f9fafb] flex-1 overflow-hidden">{children}</main>
           </div>
         </div>
       </body>

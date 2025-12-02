@@ -101,7 +101,7 @@ export default function TimeGrid() {
             key={h}
             className="flex h-16 items-start border-t pl-2 text-xs text-gray-400"
           >
-            {h > 12 ? `${h - 12} PM` : `${h} AM`}
+            {String(h).padStart(2, '0')}:00
           </div>
         ))}
       </div>
@@ -125,7 +125,10 @@ export default function TimeGrid() {
                   ref={(el) => {
                     cellRefs.current[cellKey] = el
                   }}
-                  onClick={(e) => handleCellClick(e, dayIndex, h)}
+                  onClick={(e) => {
+                    if (cellEvents.length >= 2) return
+                    handleCellClick(e, dayIndex, h)
+                  }}
                   className={`relative h-16 cursor-pointer border-t border-gray-100 p-1 text-sm hover:bg-gray-50 ${
                     isSelected ? 'bg-blue-50' : ''
                   }`}
@@ -153,14 +156,22 @@ export default function TimeGrid() {
                           className="inline-block h-3 w-3 rounded-full"
                           style={{ backgroundColor: ev.color }}
                         />
-                        <div className="text-xs font-semibold">{ev.title}</div>
+                        <div className="max-w-[100px] truncate overflow-hidden text-xs font-semibold whitespace-nowrap">
+                          {ev.title}
+                        </div>
                       </div>
                       <div className="flex items-center justify-center gap-2 text-xs font-medium">
-                        <div>
+                        <div
+                          className={`${
+                            ev.type === 'income'
+                              ? 'text-green-500'
+                              : 'text-red-500'
+                          }`}
+                        >
                           {ev.type === 'income' ? '+' : '-'}
                           {ev.amount}
                         </div>
-                        <span>Bath</span>
+                        <span>฿</span>
                       </div>
                     </div>
                   ))}

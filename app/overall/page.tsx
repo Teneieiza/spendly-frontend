@@ -106,7 +106,7 @@ const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
             value={month.toString()}
             onValueChange={(v) => setMonth(Number(v))}
           >
-            <SelectTrigger className="text-md w-44 font-bold">
+            <SelectTrigger className="text-md w-44 font-bold cursor-pointer">
               <SelectValue placeholder="Month" />
             </SelectTrigger>
             <SelectContent className="text-lg">
@@ -122,7 +122,7 @@ const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
             value={year.toString()}
             onValueChange={(v) => setYear(Number(v))}
           >
-            <SelectTrigger className="text-md w-40 font-bold">
+            <SelectTrigger className="text-md w-40 font-bold cursor-pointer">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
@@ -137,17 +137,13 @@ const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
             </SelectContent>
           </Select>
         </div>
-
-        <Button variant="outline" className="text-md px-14 py-2 font-bold">
-          FILTER
-        </Button>
       </div>
 
       <div className="grid grid-cols-7 gap-4">
         {/* Calendar Title */}
         <div className="col-span-2 flex items-center justify-center gap-4">
           <Calendar size={42} className="text-gray-700" />
-          <div className="flex items-center text-4xl font-bold tracking-wide text-black md:text-6xl">
+          <div className="flex items-center text-4xl font-bold tracking-wide text-black md:text-6xl cursor-default">
             <span className="mr-3 text-2xl font-medium md:text-3xl">
               {format(new Date(year, month), 'MMMM')
                 .toUpperCase()

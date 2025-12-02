@@ -45,6 +45,30 @@ export default function ResultModal({
 
   const events = selectedDayKey ? (allEvents[selectedDayKey] ?? []) : []
 
+  const incomeTotal = events
+    .filter((ev) => ev.type === 'income')
+    .reduce((sum, ev) => sum + ev.amount, 0)
+
+  const expenseTotal = events
+    .filter((ev) => ev.type === 'expense')
+    .reduce((sum, ev) => sum + ev.amount, 0)
+
+  const net = incomeTotal - expenseTotal
+
+  let summaryLabel = ''
+  let summaryColor = ''
+
+  if (net > 0) {
+    summaryLabel = 'Increased income'
+    summaryColor = 'text-green-600'
+  } else if (net == 0) {
+    summaryLabel = ''
+    summaryColor = 'text-black'
+  } else {
+    summaryLabel = 'Income decreased'
+    summaryColor = 'text-red-600'
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col [&>button]:hidden">
@@ -55,7 +79,11 @@ export default function ResultModal({
         </DialogHeader>
 
         <ScrollArea className="flex-1">
-          <div className="space-y-2">
+          <div
+            className={`max-h-96 space-y-2 overflow-y-auto rounded-sm p-2 ${
+              events.length > 0 ? 'border-2' : ''
+            }`}
+          >
             {events.map((ev) => (
               <div
                 key={ev.id}
@@ -71,15 +99,27 @@ export default function ResultModal({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="font-semibold">{ev.amount} ฿</span>
+                  <span className="font-semibold">
+                    {ev.type === 'income' ? '+' : '-'}
+                    {ev.amount} ฿
+                  </span>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Total Amount */}
+          <div className="mt-10 flex justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
+            <span>Total:</span>
+            <div className="flex w-58 justify-between">
+              <span>{summaryLabel}</span>
+              <span className={summaryColor}>{net} ฿</span>
+            </div>
+          </div>
         </ScrollArea>
 
         {/* Day Note */}
-        <div className="mt-4">
+        <div>
           <Input
             placeholder="Note for this day"
             value={selectedDayNote}

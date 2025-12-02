@@ -65,7 +65,7 @@ export default function ResultModal({
     summaryLabel = ''
     summaryColor = 'text-black'
   } else {
-    summaryLabel = 'Income decreased'
+    summaryLabel = 'Already spent'
     summaryColor = 'text-red-600'
   }
 
@@ -128,9 +128,12 @@ export default function ResultModal({
           {/* Total Amount */}
           <div className="mt-10 flex cursor-default justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
             <span>Total:</span>
-            <div className="flex w-58 justify-between">
+            <div className="flex gap-4">
               <span>{summaryLabel}</span>
-              <span className={summaryColor}>{net} ฿</span>
+              <div className="flex gap-2">
+                <span className={summaryColor}>{net}</span>
+                <span>฿</span>
+              </div>
             </div>
           </div>
         </ScrollArea>

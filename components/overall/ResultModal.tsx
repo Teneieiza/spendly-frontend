@@ -73,43 +73,60 @@ export default function ResultModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col [&>button]:hidden">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            RECORDS OF {selectedDate && format(selectedDate, 'dd MMM yyyy')}
+          <DialogTitle className="cursor-default text-2xl font-bold">
+            RECORDS OF{' '}
+            {selectedDate && format(selectedDate, 'dd MMM yyyy').toUpperCase()}
           </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1">
           <div
-            className={`max-h-96 space-y-2 overflow-y-auto rounded-sm p-2 ${
+            className={`max-h-96 cursor-default space-y-2 overflow-y-auto rounded-sm p-2 ${
               events.length > 0 ? 'border-2' : ''
             }`}
           >
-            {events.map((ev) => (
-              <div
-                key={ev.id}
-                className="flex items-center justify-between rounded-md border p-3 text-lg"
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className="h-3 w-3 rounded-full"
-                    style={{ backgroundColor: ev.color }}
-                  />
-                  <span>{ev.title}</span>
-                  <span className="text-gray-600">({ev.category})</span>
-                </div>
+            {[...events]
+              .sort((a, b) => a.hour - b.hour)
+              .map((ev) => (
+                <div
+                  key={ev.id}
+                  className="flex items-center justify-between rounded-md border p-3 text-lg"
+                >
+                  <div className="flex w-78 items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-3 w-3 rounded-full"
+                        style={{ backgroundColor: ev.color }}
+                      />
+                      <span className="max-w-[100px] truncate overflow-hidden whitespace-nowrap">
+                        {ev.title}
+                      </span>
 
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold">
-                    {ev.type === 'income' ? '+' : '-'}
-                    {ev.amount} ฿
-                  </span>
+                      <span className="max-w-[100px] truncate overflow-hidden whitespace-nowrap text-gray-600">
+                        ({ev.category})
+                      </span>
+                    </div>
+
+                    <div>
+                      <span className="ml-5 text-sm text-gray-500">
+                        {String(ev.hour).padStart(2, '0')}:00 -
+                        {String((ev.hour + 1) % 24).padStart(2, '0')}:00
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="font-semibold">
+                      {ev.type === 'income' ? '+' : '-'}
+                      {ev.amount} ฿
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {/* Total Amount */}
-          <div className="mt-10 flex justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
+          <div className="mt-10 flex cursor-default justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
             <span>Total:</span>
             <div className="flex w-58 justify-between">
               <span>{summaryLabel}</span>
@@ -134,7 +151,7 @@ export default function ResultModal({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="flex-1 px-6 py-4 font-bold"
+            className="flex-1 cursor-pointer px-6 py-4 font-bold"
           >
             CLOSE
           </Button>

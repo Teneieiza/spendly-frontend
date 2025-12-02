@@ -27,12 +27,12 @@ export default function HpStatusBar({
         </div>
       </div>
 
-      <div className="flex items-center text-md font-bold text-black">
+      <div className="flex items-center text-md font-bold text-black cursor-default">
         <p className="flex items-start justify-start">NAME:</p>
         <p className="ml-40">MONEY: {remaining} ฿</p>
       </div>
 
-      <div className="flex w-full items-center justify-start gap-2">
+      <div className="flex w-full items-center justify-start gap-2 cursor-default">
         <p className="text-lg font-bold">HP: </p>
         <div className="relative h-5 w-full overflow-hidden rounded-full border border-black bg-gray-200">
           <div
@@ -76,7 +76,7 @@ export default function HpStatusBar({
       </div>
 
       <p
-        className={`text-md flex items-center justify-center font-bold ${textColor}`}
+        className={`text-md flex items-center justify-center font-bold cursor-default ${textColor}`}
       >
         {statusMessage}
       </p>

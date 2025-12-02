@@ -62,11 +62,18 @@ export default function Overall() {
         format(new Date(year, month), 'yyyy-MM'),
     )
 
-  const monthlyTotal = monthlyEvents.reduce((sum, r) => sum + r.amount, 0)
+const monthlyIncome = monthlyEvents
+  .filter((ev) => ev.type === 'income')
+  .reduce((sum, r) => sum + r.amount, 0)
 
-  const [monthlyBudget, setMonthlyBudget] = useState(20000)
-  const remaining = monthlyBudget - monthlyTotal
-  const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
+const monthlyExpense = monthlyEvents
+  .filter((ev) => ev.type === 'expense')
+  .reduce((sum, r) => sum + r.amount, 0)
+
+const [monthlyBudget, setMonthlyBudget] = useState(20000)
+const remaining = monthlyBudget + monthlyIncome - monthlyExpense
+
+const percentLeft = Math.max(0, (remaining / monthlyBudget) * 100)
 
   let statusMessage = ''
   let barColor = ''

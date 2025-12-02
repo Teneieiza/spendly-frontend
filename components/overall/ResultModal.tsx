@@ -45,6 +45,30 @@ export default function ResultModal({
 
   const events = selectedDayKey ? (allEvents[selectedDayKey] ?? []) : []
 
+  const incomeTotal = events
+    .filter((ev) => ev.type === 'income')
+    .reduce((sum, ev) => sum + ev.amount, 0)
+
+  const expenseTotal = events
+    .filter((ev) => ev.type === 'expense')
+    .reduce((sum, ev) => sum + ev.amount, 0)
+
+  const net = incomeTotal - expenseTotal
+
+  let summaryLabel = ''
+  let summaryColor = ''
+
+  if (net > 0) {
+    summaryLabel = 'Increased income'
+    summaryColor = 'text-green-600'
+  } else if (net == 0) {
+    summaryLabel = ''
+    summaryColor = 'text-black'
+  } else {
+    summaryLabel = 'Income decreased'
+    summaryColor = 'text-red-600'
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col [&>button]:hidden">
@@ -75,7 +99,10 @@ export default function ResultModal({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="font-semibold">{ev.amount} ฿</span>
+                  <span className="font-semibold">
+                    {ev.type === 'income' ? '+' : '-'}
+                    {ev.amount} ฿
+                  </span>
                 </div>
               </div>
             ))}
@@ -84,9 +111,10 @@ export default function ResultModal({
           {/* Total Amount */}
           <div className="mt-10 flex justify-between rounded-md border bg-gray-100 p-3 text-lg font-bold">
             <span>Total:</span>
-            <span>
-              {events.reduce((sum, ev) => sum + Number(ev.amount), 0)} ฿
-            </span>
+            <div className="flex w-58 justify-between">
+              <span>{summaryLabel}</span>
+              <span className={summaryColor}>{net} ฿</span>
+            </div>
           </div>
         </ScrollArea>
 

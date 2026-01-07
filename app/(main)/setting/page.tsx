@@ -1,4 +1,4 @@
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import SettingClient from './setting.client'
 
 export default async function SettingPage() {

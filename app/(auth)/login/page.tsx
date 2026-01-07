@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,6 +36,7 @@ const MOCK_USER = {
 }
 
 export default function Login() {
+  const router = useRouter()
   const [authError, setAuthError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [capsLock, setCapsLock] = useState(false)
@@ -65,7 +67,7 @@ export default function Login() {
       return
     }
 
-    alert('Login success 🎉')
+    router.push('/dashboard')
   }
 
   return (

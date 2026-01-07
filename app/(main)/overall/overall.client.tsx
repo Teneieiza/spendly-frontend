@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Session } from 'next-auth'
 import {
   format,
   startOfMonth,
@@ -8,7 +9,7 @@ import {
   getDaysInMonth,
   isToday,
 } from 'date-fns'
-import { Button } from '@/components/ui/button'
+
 import {
   Select,
   SelectTrigger,
@@ -16,13 +17,19 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
+
 import { Calendar } from 'lucide-react'
 import HpStatusBar from '@/components/overall/HpStatusBar'
 import ResultModal from '@/components/overall/ResultModal'
 import { useEventsStore } from '@/store/useEventsStore'
-import { CATEGORY_OPTIONS, Category } from '@/constants/categories'
+import { CATEGORY_OPTIONS } from '@/constants/categories'
 
-export default function Overall() {
+type Props = {
+  session: Session | null
+}
+
+export default function OverallClient({ session }: Props) {
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [open, setOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
@@ -42,7 +49,7 @@ export default function Overall() {
     amount: '',
   })
 
-  const totalDays = getDaysInMonth(new Date(year, month))
+const totalDays = getDaysInMonth(new Date(year, month))
   const startDate = startOfMonth(new Date(year, month))
   const days = Array.from({ length: totalDays }, (_, i) =>
     addDays(startDate, i),

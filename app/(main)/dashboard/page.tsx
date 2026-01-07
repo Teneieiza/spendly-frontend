@@ -1,7 +1,7 @@
-export default function Dashboard() {
-  return (
-    <div className="flex justify-center items-center h-full">
-      <h1>Dashborad</h1>
-    </div>
-  );
+import { auth } from '@/auth'
+import DashboardClient from './dashboard.client'
+
+export default async function DashboardPage() {
+  const session = await auth()
+  return <DashboardClient session={session} />
 }

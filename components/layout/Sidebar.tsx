@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import {
   Wallet,
@@ -146,7 +147,7 @@ export default function Sidebar() {
         </div>
 
         {/* Logout */}
-        <div className="mb-4 px-4 font-bold">
+        <div onClick={() => signOut({ callbackUrl: '/login' })} className="mb-4 px-4 font-bold">
           <button className="flex w-full items-center justify-center rounded-md bg-gray-100 py-2 text-sm drop-shadow-lg transition-colors hover:bg-gray-200">
             {open ? 'LOGOUT' : <LogOut size={16} />}
           </button>
@@ -156,7 +157,7 @@ export default function Sidebar() {
   )
 }
 
-// ✅ แยก component ย่อยให้สะอาดขึ้น
+// แยก component ย่อยให้สะอาดขึ้น
 function SidebarLink({ href, icon, label, pathname, open }: any) {
   return (
     <Link

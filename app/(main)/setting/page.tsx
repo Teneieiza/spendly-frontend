@@ -1,7 +1,7 @@
-export default function Setting() {
-  return (
-    <div className="flex justify-center items-center h-full">
-      <h1>Setting</h1>
-    </div>
-  );
+import { auth } from '@/auth'
+import SettingClient from './setting.client'
+
+export default async function SettingPage() {
+  const session = await auth()
+  return <SettingClient session={session} />
 }

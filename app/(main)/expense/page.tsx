@@ -1,4 +1,4 @@
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import ExpenseClient from './expense.client'
 
 export default async function ExpensePage() {

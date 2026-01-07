@@ -1,4 +1,4 @@
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import OverallClient from './overall.client'
 
 export default async function OverallPage() {

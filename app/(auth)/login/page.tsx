@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { GoogleIcon } from '@/components/icons/google'
-import { Eye, EyeOff, AlertTriangle, ArrowBigUpDash } from 'lucide-react'
+import { Eye, EyeOff, ArrowBigUpDash } from 'lucide-react'
 
 /* ------------------ schema ------------------ */
 const loginSchema = z.object({
@@ -28,13 +30,8 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
-/* ------------------ mock user ------------------ */
-const MOCK_USER = {
-  email: 'test@example.com',
-  password: 'password123',
-}
-
 export default function Login() {
+  const router = useRouter()
   const [authError, setAuthError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [capsLock, setCapsLock] = useState(false)
@@ -55,17 +52,18 @@ export default function Login() {
     setSubmitted(true)
     setAuthError('')
 
-    await new Promise((r) => setTimeout(r, 800))
+    const res = await signIn('credentials', {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    })
 
-    if (
-      data.email !== MOCK_USER.email ||
-      data.password !== MOCK_USER.password
-    ) {
+    if (res?.error) {
       setAuthError('Email or password is incorrect.')
       return
     }
 
-    alert('Login success 🎉')
+    router.push('/dashboard')
   }
 
   return (
@@ -198,7 +196,8 @@ export default function Login() {
           <Button
             type="button"
             variant="outline"
-            className="flex w-full cursor-pointer gap-2"
+            className="flex w-full gap-2 cursor-pointer"
+            onClick={() => signIn('google')}
           >
             <GoogleIcon />
             Continue with Google

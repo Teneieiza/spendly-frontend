@@ -196,8 +196,12 @@ export default function Login() {
           <Button
             type="button"
             variant="outline"
-            className="flex w-full gap-2 cursor-pointer"
-            onClick={() => signIn('google')}
+            className="flex w-full cursor-pointer gap-2"
+            onClick={() =>
+              signIn('google', {
+                callbackUrl: '/dashboard',
+              })
+            }
           >
             <GoogleIcon />
             Continue with Google

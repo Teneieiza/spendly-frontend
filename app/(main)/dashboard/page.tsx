@@ -1,4 +1,4 @@
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import DashboardClient from './dashboard.client'
 
 export default async function DashboardPage() {

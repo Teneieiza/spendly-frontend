@@ -58,7 +58,7 @@ export default function Login() {
       redirect: false,
     })
 
-    if (!res?.ok) {
+    if (res?.error) {
       setAuthError('Email or password is incorrect.')
       return
     }
@@ -196,7 +196,7 @@ export default function Login() {
           <Button
             type="button"
             variant="outline"
-            className="flex w-full gap-2"
+            className="flex w-full gap-2 cursor-pointer"
             onClick={() => signIn('google')}
           >
             <GoogleIcon />
